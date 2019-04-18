@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 
 	"cloud.google.com/go/storage"
+	"github.com/grafov/m3u8"
 	"google.golang.org/api/option"
 )
 
@@ -21,12 +21,9 @@ func readM3u8() {
 		panic(err)
 	}
 	defer rc.Close()
-	data, err := ioutil.ReadAll(rc)
-	if err != nil {
-		panic(err)
-	}
-	m3u8 := string(data)
-	fmt.Print(m3u8)
+	p, _, err := m3u8.DecodeFrom(rc, true)
+	playlist := p.(*m3u8.MediaPlaylist)
+	fmt.Printf("%v", playlist)
 }
 
 func main() {
