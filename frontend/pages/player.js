@@ -1,18 +1,14 @@
 import React from 'react'
-import axios from '../utils/axios'
+import Head from 'next/head'
+import { backend } from '../config'
+import VideoPlayer from '../components/VideoPlayer'
 
 class Player extends React.Component {
   static async getInitialProps({ query }) {
     if (!query.vid) {
       return { error: true, errorMessage: 'No Vid provided!' }
     }
-    try {
-    const resp = await axios.get(`/${query.vid}`)
-    const m3u8 = resp.data
-      return { m3u8 }
-    } catch (error) {
-      return { error: true, errorMessage: 'Video Not Found.' }
-    }
+    return { vid: query.vid }
   }
   render() {
     if (this.props.error) {
@@ -24,9 +20,16 @@ class Player extends React.Component {
     }
     return (
       <main>
-        <pre>
-          {this.props.m3u8}
-        </pre>
+        <Head>
+          <link rel="stylesheet" href="//vjs.zencdn.net/5.12/video-js.css" />
+        </Head>
+        <VideoPlayer
+          controls={true}
+          sources={[{
+            src: `${backend}/${this.props.vid}`,
+            type: 'application/x-mpegURL',
+          }]}
+        />
       </main>
     )
   }

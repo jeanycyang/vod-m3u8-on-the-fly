@@ -15,6 +15,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("not exist"))
 	} else {
+		w.Header().Add("Access-Control-Allow-Origin", "*")
 		w.Write([]byte(m3u8))
 	}
 }
