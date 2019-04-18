@@ -1,10 +1,10 @@
-package main
+package signM3u8
 
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"os"
 	"time"
 
 	"cloud.google.com/go/storage"
@@ -19,16 +19,17 @@ type GCPCreds struct {
 }
 
 var gcpCreds GCPCreds
+var pwd string
 
-func readM3u8() string {
+func signM3u8(videoName string) (signedM3u8 string, err error) {
 	ctx := context.Background()
-	client, err := storage.NewClient(ctx, option.WithCredentialsFile("./key.json"))
+	client, err := storage.NewClient(ctx, option.WithCredentialsFile(pwd+"./key.json"))
 	if err != nil {
 		panic(err)
 	}
-	rc, err := client.Bucket("vod-m3u8").Object("vod2.mov/hls.m3u8").NewReader(ctx)
+	rc, err := client.Bucket("vod-m3u8").Object(videoName + "/hls.m3u8").NewReader(ctx)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	defer rc.Close()
 	p, _, err := m3u8.DecodeFrom(rc, true)
@@ -44,7 +45,7 @@ func readM3u8() string {
 	// add default key as the first seq's key
 	// so we need to sign "the first seq's key" instead of default key
 	playlist.Segments[0].Key.URI = signURL(playlist.Key.URI)
-	return playlist.String()
+	return playlist.String(), nil
 }
 
 func signURL(fileName string) string {
@@ -60,9 +61,11 @@ func signURL(fileName string) string {
 	return url
 }
 
-func main() {
-	keyFile, _ := ioutil.ReadFile("./key.json")
+// SignM3u8 sign key + seqs in the m3u8 file
+func SignM3u8(videoName string) (signedM3u8 string, err error) {
+	pwd, _ := os.Getwd()
+	keyFile, _ := ioutil.ReadFile(pwd + "/key.json")
 	json.Unmarshal(keyFile, &gcpCreds)
-	signedM3u8 := readM3u8()
-	fmt.Print(signedM3u8)
+	signed, err := signM3u8(videoName)
+	return signed, err
 }
