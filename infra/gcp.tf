@@ -14,4 +14,10 @@ resource "google_storage_bucket" "tmp-bucket" {
 resource "google_storage_bucket" "vod-bucket" {
   name     = "vod-m3u8"
   location = "ASIA"
+  cors {
+    origin = ["*"]
+    method = ["GET"]
+    response_header = ["Content-Type"]
+    max_age_seconds = 3600
+  }
 }
