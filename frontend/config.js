@@ -1,0 +1,1 @@
+export const backend = process.env.BACKEND || 'http://localhost:8080'

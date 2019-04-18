@@ -1,0 +1,29 @@
+{
+  "name": "vod-m3u8-frontend",
+  "version": "1.0.0",
+  "description": "Simple Video Player",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jeanycyang/vod-m3u8-on-the-fly/frontend"
+  },
+  "keywords": [
+    "video",
+    "vod",
+    "m3u8"
+  ],
+  "author": "Jean Yang",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "next": "^8.1.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  }
+}
